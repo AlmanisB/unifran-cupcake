@@ -1,0 +1,187 @@
+﻿@page "/cart"
+@using les_petits_cakes.Data
+@inject ShoppingCartService CartService
+@inject NavigationManager NavigationManager
+@inject ApplicationDbContext DbContext
+@implements IDisposable
+
+<h3>Carrinho de Compras</h3>
+
+@if (_cartItems.Any())
+{
+  <div class="text-end mb-3">
+    <button class="btn btn-danger" @onclick="@(async () => await CartService.ClearCart())">Limpar Carrinho</button>
+  </div>
+  <SfGrid DataSource="@_cartItems" AllowSelection="false">
+    <GridAggregates>
+      <GridAggregate>
+        <GridAggregateColumns>
+          <GridAggregateColumn Field="@(nameof(CartItemModel.Quantity))" Type="AggregateType.Sum">
+            <FooterTemplate>
+              @{
+                var aggregate = context as AggregateTemplateContext;
+                <div>
+                  @(aggregate?.Sum)
+                </div>
+              }
+            </FooterTemplate>
+          </GridAggregateColumn>
+          <GridAggregateColumn Field="@(nameof(CartItemModel.TotalPrice))" Type="AggregateType.Sum">
+            <FooterTemplate>
+              @{
+                var aggregate = context as AggregateTemplateContext;
+                <div>
+                  R$ @(aggregate?.Sum)
+                </div>
+              }
+            </FooterTemplate>
+          </GridAggregateColumn>
+        </GridAggregateColumns>
+      </GridAggregate>
+    </GridAggregates>
+    <GridColumns>
+      <GridColumn HeaderText="" Width="100">
+        <Template>
+          @if (context is CartItemModel item)
+          {
+            <img src="@item.CupcakeModel.Image" alt="@item.CupcakeModel.Title" width="80" height="80" />
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn Field="CupcakeModel.Title" HeaderText="Nome" Width="200"></GridColumn>
+      <GridColumn HeaderText="Preço" TextAlign="TextAlign.Right" Width="50">
+        <Template>
+          @{
+            @if (context is CartItemModel item)
+            {
+              <div>R$ @((item.CupcakeModel.Price - item.CupcakeModel.Discount).ToString("F2"))</div>
+            }
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn Field="@(nameof(CartItemModel.Quantity))" TextAlign="TextAlign.Center" HeaderText="Quantidade" Width="100">
+        <Template>
+          @{
+            @if (context is CartItemModel item)
+            {
+              <div class="input-group px-5">
+                <div class="input-group-prepend">
+                  @if (item.Quantity == 1)
+                  {
+                    <button class="btn btn-outline-secondary math-button" type="button" @onclick="_ => OnDecrement(item)"><i class="e-icons e-trash m-0"></i></button>
+                  }
+                  else
+                  {
+                    <button class="btn btn-outline-secondary math-button" type="button" @onclick="_ => OnDecrement(item)"><span class="math-button-span">-</span></button>
+                  }
+                </div>
+                <input type="text" class="form-control text-center" @bind="item.Quantity" />
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary math-button" type="button" @onclick="_ => OnIncrement(item)"><span class="math-button-span">+</span></button>
+                </div>
+              </div>
+            }
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn Field="@(nameof(CartItemModel.TotalPrice))" TextAlign="TextAlign.Right" HeaderText="Total" Width="50">
+        <Template>
+          R$ @((context as CartItemModel)?.TotalPrice)
+        </Template>
+      </GridColumn>
+    </GridColumns>
+  </SfGrid>
+
+  <div class="text-end mt-3">
+    <button class="btn btn-primary" @onclick="Checkout">Finalizar Compra</button>
+  </div>
+}
+else
+{
+  <p>O carrinho está vazio.</p>
+}
+
+<SfDialog Width="400px" ShowCloseIcon="true" @bind-Visible="_showPopup" IsModal="true">
+  <DialogTemplates>
+    <Header>
+      <h3><b>Finalizar Compra</b></h3>
+    </Header>
+    <Content>
+      <div class="m-3">
+        <p>Parabéns! Você acaba de comprar os melhores cupcakes do mundo!</p>
+        <p>Volte sempre!</p>
+      </div>
+    </Content>
+  </DialogTemplates>
+  <DialogButtons>
+    <DialogButton Content="Fechar" IsPrimary="true" OnClick="@HideDetails" />
+  </DialogButtons>
+</SfDialog>
+
+@code {
+  private List<CartItemModel> _cartItems = new();
+  private bool _showPopup;
+
+  protected override void OnInitialized()
+  {
+    CartService.OnChange += OnChange;
+  }
+
+  public void Dispose()
+  {
+    CartService.OnChange -= OnChange;
+  }
+
+  private async void OnChange()
+  {
+    await LoadCartItems();
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      await LoadCartItems();
+    }
+  }
+
+  private async Task LoadCartItems()
+  {
+    _cartItems = await CartService.GetCartItems();
+    StateHasChanged();
+  }
+
+  private async Task OnIncrement(CartItemModel itemModel)
+  {
+    itemModel.Quantity++;
+    await CartService.IncrementQuantity(itemModel);
+  }
+
+  private async Task OnDecrement(CartItemModel itemModel)
+  {
+    itemModel.Quantity--;
+    await CartService.DecrementQuantity(itemModel);
+  }
+
+  private async Task Checkout()
+  {
+    _showPopup = true;
+    var order = new OrderModel(0, 1, _cartItems.Sum(ct => ct.TotalPrice), "Pago", DateTime.Now, DateTime.Now);
+    DbContext.Orders.Add(order);
+    await DbContext.SaveChangesAsync();
+    foreach (var item in _cartItems)
+    {
+      var orderItem = new OrderItemModel(0, item.Quantity, item.CupcakeModel.Price, item.CupcakeModel.Discount, order.Id, 1, item.CupcakeModel.Id);
+      DbContext.OrderItems.Add(orderItem);
+    }
+    await DbContext.SaveChangesAsync();
+    await CartService.ClearCart();
+    await LoadCartItems();
+  }
+
+  private void HideDetails()
+  {
+    _showPopup = false;
+    NavigationManager.NavigateTo("/");
+  }
+}

@@ -1,0 +1,49 @@
+﻿@using Microsoft.IdentityModel.Tokens
+@inject ToastService ToastService
+
+<SfToast @ref="_toast" Timeout="@(2000)">
+  <ToastPosition X="Right" Y="Top"></ToastPosition>
+  <ToastTemplates>
+    <Title>
+      @if (!_options.Title.IsNullOrEmpty())
+      {
+        <div class="e-toast-title">
+          @_options.Title
+        </div>
+      }
+    </Title>
+    <Content>
+      @if (!_options.Content.IsNullOrEmpty())
+      {
+        <div class="e-toast-content">
+          @_options.Content
+        </div>
+      }
+    </Content>
+  </ToastTemplates>
+</SfToast>
+
+@code {
+  private readonly ToastOptions _options = new("");
+
+  private SfToast _toast = null!;
+
+  private bool IsVisible { get; set; }
+
+  protected override void OnInitialized()
+  {
+    ToastService.OnShow += option =>
+    {
+      InvokeAsync(() =>
+      {
+        _options.Title = option.Title;
+        _options.Content = option.Content;
+        IsVisible = true;
+        StateHasChanged();
+        _toast.ShowAsync();
+      });
+    };
+
+    base.OnInitialized();
+  }
+}

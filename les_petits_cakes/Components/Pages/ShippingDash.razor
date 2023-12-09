@@ -1,0 +1,75 @@
+﻿@page "/shippingdash"
+@using les_petits_cakes.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext DbContext
+
+<h3>Controle de Entregas</h3>
+
+@if (_orders.Any())
+{
+  <SfGrid DataSource="@_orders" AllowPaging="true" AllowSorting="true" AllowFiltering="true" Height="350px">
+    <GridColumns>
+      <GridColumn Field="@nameof(OrderModel.Id)" HeaderText="Id" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+      <GridColumn Field="User.Name" HeaderText="Cliente" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+      <GridColumn Field="User.Email" HeaderText="Email" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+      <GridColumn Field="@nameof(OrderModel.Id)" HeaderText="Volumes" TextAlign="TextAlign.Center" Width="150">
+        <Template>
+          @if (context is OrderModel order)
+          {
+            <div>@order.OrderItems?.Sum(oi => oi.Quantity)</div>
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn Field="@nameof(OrderModel.Status)" HeaderText="Status" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+      <GridColumn Field="@nameof(OrderModel.Id)" HeaderText="Ações" TextAlign="TextAlign.Center" Width="150">
+        <Template>
+          @if (context is OrderModel order)
+          {
+            <SfButton CssClass="e-primary" @onclick="@(() => DetailOrder(order))">Detalhes</SfButton>
+          }
+        </Template>
+      </GridColumn>
+    </GridColumns>
+  </SfGrid>
+
+  <SfDialog Width="400px" ShowCloseIcon="true" @bind-Visible="_showPopup" IsModal="true">
+    <DialogTemplates>
+      <Header>
+        <h3><b>@_selectedOrder?.Id</b></h3>
+      </Header>
+      <Content>
+      </Content>
+    </DialogTemplates>
+  </SfDialog>
+
+}
+else
+{
+  <p>Carregando pedidos...</p>
+}
+
+@code {
+  private List<OrderModel> _orders = new();
+  private OrderModel? _selectedOrder;
+  private bool _showPopup;
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    if (firstRender)
+    {
+      LoadOrders();
+    }
+  }
+
+  private void LoadOrders()
+  {
+    _orders = DbContext.Orders.Include("User").Include("OrderItems").OrderByDescending(o => o.Status).ThenBy(o => o.CreatedAt).ToList();
+    StateHasChanged();
+  }
+
+  private void DetailOrder(OrderModel order)
+  {
+    _selectedOrder = order;
+    _showPopup = true;
+  }
+}

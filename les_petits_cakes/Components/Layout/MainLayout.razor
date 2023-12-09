@@ -1,0 +1,55 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject ShoppingCartService CartService
+@inject NavigationManager NavigationManager
+
+<div class="page">
+  <div class="sidebar">
+    <NavMenu />
+  </div>
+
+  <main>
+    <div class="top-row px-4">
+    </div>
+
+    <article class="content px-4">
+      @Body
+    </article>
+  </main>
+</div>
+<ToastComponent />
+@if (_cartItemsCount > 0)
+{
+  <div class="floating-cart">
+    <SfButton CssClass="e-primary" @onclick="@(() => NavigationManager.NavigateTo("/cart"))">
+      <span class="fw-bolder text-white">Carrinho @_cartItemsCount</span>
+    </SfButton>
+  </div>
+}
+<div id="blazor-error-ui">
+  An unhandled error has occurred.
+  <a href="" class="reload">Reload</a>
+  <a class="dismiss">🗙</a>
+</div>
+
+@code {
+  private int _cartItemsCount;
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    if (!firstRender) return;
+    CartService.OnChange += OnChange;
+    OnChange();
+  }
+
+  public void Dispose()
+  {
+    CartService.OnChange -= OnChange;
+  }
+
+  private async void OnChange()
+  {
+    _cartItemsCount = await CartService.GetCartCount();
+    StateHasChanged();
+  }
+}

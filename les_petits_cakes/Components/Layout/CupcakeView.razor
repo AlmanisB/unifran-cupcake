@@ -1,0 +1,80 @@
+﻿@using les_petits_cakes.Data
+@using System.Diagnostics
+@inject ShoppingCartService CartService
+@inject ToastService ToastService
+
+<div class="cupcake-container">
+  <img src="@Cupcake.Image" alt="@Cupcake.Title" class="cupcake-image" />
+  <div class="cupcake-details">
+    <h6><b>@Cupcake.Title</b></h6>
+    @if (Cupcake.Discount > 0)
+    {
+      <p><b>De:</b> <s> R$@Cupcake.Price</s></p>
+      <p class="cupcake-price">Por: R$@(Cupcake.Price - Cupcake.Discount)</p>
+    }
+    else
+    {
+      <p class="cupcake-price">R$@Cupcake.Price</p>
+    }
+    @if (Cupcake.Stock > 0)
+    {
+      <SfButton CssClass="e-primary card-button" @onclick="AddToCart">Adicionar ao Carrinho</SfButton>
+    }
+    else
+    {
+      <SfButton CssClass="card-button" Disabled="true">Indisponível</SfButton>
+    }
+    <SfButton CssClass="card-button" @onclick="ShowDetails">Detalhes</SfButton>
+  </div>
+
+  <SfDialog Width="400px" ShowCloseIcon="true" @bind-Visible="_showPopup" IsModal="true">
+    <DialogTemplates>
+      <Header>
+        <h3><b>@Cupcake.Title</b></h3>
+      </Header>
+      <Content>
+        <img src="@Cupcake.Image" alt="@Cupcake.Title" class="cupcake-image-details" />
+        <hr />
+        <div class="m-3">
+          <p><b>@Cupcake.Title</b></p>
+          <p>@Cupcake.Description</p>
+          @if (Cupcake.Discount > 0)
+          {
+            <p><b>De:</b> <s> R$@Cupcake.Price</s></p>
+            <p><b>Por:</b> R$@(Cupcake.Price - Cupcake.Discount)</p>
+          }
+          else
+          {
+            <p><b>R$@Cupcake.Price</b></p>
+          }
+          <p>@Cupcake.Category</p>
+        </div>
+      </Content>
+    </DialogTemplates>
+    <DialogButtons>
+      <DialogButton Content="Fechar" IsPrimary="true" OnClick="@HideDetails" />
+    </DialogButtons>
+  </SfDialog>
+</div>
+
+@code {
+  [Parameter] public required CupcakeModel Cupcake { get; set; }
+
+  private bool _showPopup;
+
+  private async Task AddToCart()
+  {
+    await CartService.AddToCart(Cupcake);
+    ToastService.ShowToast(new ToastOptions("Cupcake adicionado ao carrinho!"));
+  }
+
+  private void ShowDetails()
+  {
+    _showPopup = true;
+  }
+
+  private void HideDetails()
+  {
+    _showPopup = false;
+  }
+}

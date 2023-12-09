@@ -1,0 +1,92 @@
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="">Les Petits Cakes</a>
+  </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+  <nav class="flex-column">
+    <div class="nav-item px-3">
+      <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+        <span class="e-icons e-star-filled" aria-hidden="true"></span> Destaques
+      </NavLink>
+    </div>
+
+    <div class="nav-item px-3">
+      <NavLink class="nav-link" href="promo">
+        <span class="e-icons e-bookmark" aria-hidden="true"></span> Promoções
+      </NavLink>
+    </div>
+
+    <div class="nav-item px-3">
+      <NavLink class="nav-link" href="orders">
+        <span class="e-icons e-changes-accept" aria-hidden="true"></span> Pedidos
+      </NavLink>
+    </div>
+
+    <AuthorizeView>
+      <Authorized>
+        <div class="nav-item px-3">
+          <NavLink class="nav-link" href="Account/Manage">
+            <span class="e-icons e-user" aria-hidden="true"></span> @context.User.Identity?.Name
+          </NavLink>
+        </div>
+        <div class="nav-item px-3">
+          <form action="Account/Logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="@_currentUrl" />
+            <button type="submit" class="nav-link">
+              <span class="e-icons e-star-filled" aria-hidden="true"></span> Sair
+            </button>
+          </form>
+        </div>
+      </Authorized>
+      <NotAuthorized>
+        <div class="nav-item px-3">
+          <NavLink class="nav-link" href="Account/Register">
+            <span class="e-icons e-people" aria-hidden="true"></span> Registrar-se
+          </NavLink>
+        </div>
+        <div class="nav-item px-3">
+          <NavLink class="nav-link" href="Account/Login">
+            <span class="e-icons e-user" aria-hidden="true"></span> Entrar
+          </NavLink>
+        </div>
+      </NotAuthorized>
+    </AuthorizeView>
+@* 
+    <div class="nav-item px-3">
+      <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+        <span class="e-icons e-resizer-horizontal" aria-hidden="true"></span> Categorias
+      </NavLink>
+    </div> *@
+  </nav>
+</div>
+
+@code {
+  private string? _currentUrl;
+
+  protected override void OnInitialized()
+  {
+    _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+    NavigationManager.LocationChanged += OnLocationChanged;
+  }
+
+  private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+  {
+    _currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+    StateHasChanged();
+  }
+
+  public void Dispose()
+  {
+    NavigationManager.LocationChanged -= OnLocationChanged;
+  }
+}
+

@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\obj\\Release\\net8.0\\linux-x64\\scopedcss\\projectbundle\\les_petits_cakes.bundle.scp.css",
+      "PackagePath": "staticwebassets\\les_petits_cakes.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\linux-x64\\staticwebassets\\msbuild.build.les_petits_cakes.props",
+      "PackagePath": "build\\les_petits_cakes.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\linux-x64\\staticwebassets\\msbuild.buildMultiTargeting.les_petits_cakes.props",
+      "PackagePath": "buildMultiTargeting\\les_petits_cakes.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\linux-x64\\staticwebassets\\msbuild.buildTransitive.les_petits_cakes.props",
+      "PackagePath": "buildTransitive\\les_petits_cakes.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\linux-x64\\staticwebassets\\msbuild.les_petits_cakes.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

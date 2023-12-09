@@ -1,0 +1,17 @@
+﻿::deep .math-button {
+  width: 40px;
+  height: 40px;
+  display: block;
+  text-align: center;
+}
+
+::deep .math-button-span {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+::deep .e-trash {
+  color: #ff0000;
+}

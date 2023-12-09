@@ -1,0 +1,17 @@
+[b-vqec729652] .math-button {
+  width: 40px;
+  height: 40px;
+  display: block;
+  text-align: center;
+}
+
+[b-vqec729652] .math-button-span {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+[b-vqec729652] .e-trash {
+  color: #ff0000;
+}

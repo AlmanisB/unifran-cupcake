@@ -1,0 +1,62 @@
+.cupcake-container[b-upzwi27u7s] {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 8px;
+  transition: transform 0.2s;
+  width: 200px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  vertical-align: top;
+}
+
+  .cupcake-container:hover[b-upzwi27u7s] {
+    transform: scale(1.05);
+  }
+
+.cupcake-image[b-upzwi27u7s] {
+  width: 100%;
+  height: 150px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.cupcake-image-details[b-upzwi27u7s] {
+  width: 100%;
+  height: 200px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.cupcake-details[b-upzwi27u7s] {
+  height: auto;
+  flex-grow: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  justify-content: space-between;
+}
+
+[b-upzwi27u7s] .card-button {
+  width: 100%;
+}
+
+.cupcake-description[b-upzwi27u7s] {
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.cupcake-price[b-upzwi27u7s] {
+  font-weight: bolder;
+  color: #e44d26;
+  margin-bottom: 4px;
+}
+
+.cupcake-category[b-upzwi27u7s] {
+  color: #777;
+  font-size: 0.8rem;
+}

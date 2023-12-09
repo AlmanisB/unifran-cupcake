@@ -1,0 +1,185 @@
+﻿@page "/cupcakecontroldash"
+@using les_petits_cakes.Data
+@inject ApplicationDbContext DbContext
+@inject ToastService ToastService
+
+<h3>Controle de Cupcakes</h3>
+
+@if (_cupcakes.Any())
+{
+  <div class="text-end mb-3">
+    <SfButton CssClass="e-primary" @onclick="CreateCupcake">Criar Cupcake</SfButton>
+  </div>
+
+  <SfGrid DataSource="@_cupcakes" AllowPaging="true" AllowSorting="true" AllowFiltering="true" Height="350px">
+    <GridColumns>
+      <GridColumn Field="@nameof(CupcakeModel.Title)" HeaderText="Título" TextAlign="TextAlign.Center" Width="250"></GridColumn>
+      <GridColumn Field="@nameof(CupcakeModel.Price)" HeaderText="Preço" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+      <GridColumn Field="@nameof(CupcakeModel.Discount)" HeaderText="Desconto" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+      <GridColumn Field="@nameof(CupcakeModel.Stock)" HeaderText="Estoque" TextAlign="TextAlign.Center" Width="150">
+        <Template>
+          @if (context is CupcakeModel cupcake)
+          {
+            <div class="input-group px-5">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary math-button" type="button" @onclick="_ => OnDecrement(cupcake)"><span class="math-button-span">-</span></button>
+              </div>
+              <input type="text" class="form-control text-center" @bind="cupcake.Stock" />
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary math-button" type="button" @onclick="_ => OnIncrement(cupcake)"><span class="math-button-span">+</span></button>
+              </div>
+            </div>
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn Field="@nameof(CupcakeModel.Heat)" HeaderText="Popularidade" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+      <GridColumn Field="@nameof(CupcakeModel.Id)" HeaderText="Ações" TextAlign="TextAlign.Center" Width="150">
+        <Template>
+          @if (context is CupcakeModel cupcake)
+          {
+            <SfButton CssClass="e-primary" @onclick="@(() => EditCupcake(cupcake))">Editar</SfButton>
+            <SfButton CssClass="e-primary" @onclick="@(() => DeleteCupcake(cupcake))">Deletar</SfButton>
+          }
+        </Template>
+      </GridColumn>
+    </GridColumns>
+  </SfGrid>
+}
+else
+{
+  <p>Carregando a lista...</p>
+}
+
+<SfDialog Width="400px" ShowCloseIcon="true" @bind-Visible="_showPopup" IsModal="true">
+  <DialogTemplates>
+    <Header>
+      <h3><b>@_selectedCupcake.Title</b></h3>
+    </Header>
+    <Content>
+      <EditForm Model="@_selectedCupcake">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+          <label for="title">Título</label>
+          <InputText id="title" class="form-control" @bind-Value="_selectedCupcake.Title" />
+        </div>
+        <div class="form-group">
+          <label for="description">Descrição</label>
+          <InputTextArea id="description" class="form-control" @bind-Value="_selectedCupcake.Description" />
+        </div>
+        <div class="form-group">
+          <label for="category">Categoria</label>
+          <InputText id="category" class="form-control" @bind-Value="_selectedCupcake.Category" />
+        </div>
+        <div class="form-group">
+          <label for="price">Preço</label>
+          <InputNumber id="price" class="form-control" @bind-Value="_selectedCupcake.Price" @bind-Value:format="f2" />
+        </div>
+        <div class="form-group">
+          <label for="discount">Desconto</label>
+          <InputNumber id="discount" class="form-control" @bind-Value="_selectedCupcake.Discount" @bind-Value:format="f2" />
+        </div>
+        <div class="form-group">
+          <label for="stock">Estoque</label>
+          <InputNumber id="stock" class="form-control" @bind-Value="_selectedCupcake.Stock" />
+        </div>
+        <div class="form-group">
+          <label for="heat">Popularidade</label>
+          <InputNumber id="heat" class="form-control" @bind-Value="_selectedCupcake.Heat" />
+        </div>
+        <div class="form-group">
+          <label for="image">URL da Imagem</label>
+          <InputText id="image" class="form-control" @bind-Value="_selectedCupcake.Image" />
+        </div>
+        <div class="form-group mt-3">
+          <SfButton CssClass="e-primary" @onclick="@(() => SaveCupcake(context))">Salvar</SfButton>
+          <SfButton CssClass="e-primary" @onclick="@(CancelCupcake)">Cancelar</SfButton>
+        </div>
+      </EditForm>
+    </Content>
+  </DialogTemplates>
+</SfDialog>
+
+@code {
+  private List<CupcakeModel> _cupcakes = new();
+  private bool _showPopup;
+  private CupcakeModel _selectedCupcake = null!;
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    if (firstRender)
+    {
+      LoadCupcakes();
+    }
+  }
+
+  private void LoadCupcakes()
+  {
+    _cupcakes = DbContext.Cupcakes.ToList();
+    StateHasChanged();
+  }
+
+  private void CreateCupcake()
+  {
+    _selectedCupcake = new CupcakeModel("", "", "", 0m, 0m, "Normal", 0, 0, 0);
+    _showPopup = true;
+  }
+
+  private void EditCupcake(CupcakeModel cupcake)
+  {
+    _selectedCupcake = cupcake;
+    _showPopup = true;
+  }
+
+  private void DeleteCupcake(CupcakeModel cupcake)
+  {
+    DbContext.Cupcakes.Remove(cupcake);
+    DbContext.SaveChanges();
+    LoadCupcakes();
+    ToastService.ShowToast(new ToastOptions("Cupcake deletado com sucesso!"));
+  }
+
+  private void HideDetails()
+  {
+    _showPopup = false;
+  }
+
+  private async void SaveCupcake(EditContext context)
+  {
+    if (!context.Validate()) return;
+
+    if (_selectedCupcake.Id == 0)
+    {
+      DbContext.Cupcakes.Add(_selectedCupcake);
+    }
+    else
+    {
+      DbContext.Cupcakes.Update(_selectedCupcake);
+    }
+    await DbContext.SaveChangesAsync();
+    ToastService.ShowToast(new ToastOptions("Cupcake salvo com sucesso!"));
+    _showPopup = false;
+    LoadCupcakes();
+  }
+
+  private void CancelCupcake()
+  {
+    _showPopup = false;
+  }
+
+  private async Task OnIncrement(CupcakeModel cupcake)
+  {
+    cupcake.Stock++;
+    DbContext.Cupcakes.Update(cupcake);
+    await DbContext.SaveChangesAsync();
+    LoadCupcakes();
+  }
+
+  private async Task OnDecrement(CupcakeModel cupcake)
+  {
+    cupcake.Stock--;
+    DbContext.Cupcakes.Update(cupcake);
+    await DbContext.SaveChangesAsync();
+    LoadCupcakes();
+  }
+}
