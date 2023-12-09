@@ -5372,11 +5372,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\les_petits_cakes.csproj",
+      "projectUniqueName": "C:\\Users\\alman\\Source\\Repos\\AlmanisB\\unifran-cupcake\\les_petits_cakes\\les_petits_cakes.csproj",
       "projectName": "les_petits_cakes",
-      "projectPath": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\les_petits_cakes.csproj",
+      "projectPath": "C:\\Users\\alman\\Source\\Repos\\AlmanisB\\unifran-cupcake\\les_petits_cakes\\les_petits_cakes.csproj",
       "packagesPath": "C:\\Users\\alman\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\obj\\",
+      "outputPath": "C:\\Users\\alman\\Source\\Repos\\AlmanisB\\unifran-cupcake\\les_petits_cakes\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\alman\\AppData\\Roaming\\NuGet\\NuGet.Config",

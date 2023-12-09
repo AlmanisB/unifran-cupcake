@@ -1,0 +1,35 @@
+﻿@page "/promo"
+@using les_petits_cakes.Data
+@inject ApplicationDbContext DbContext
+
+<PageTitle>Les Petits Cakes</PageTitle>
+
+<h3 class="text-center"><b>Promoções</b></h3>
+
+@if (_cupcakes.Count > 0)
+{
+  <div class="cupcake-list">
+    @foreach (var cupcake in _cupcakes)
+    {
+      <CupcakeView Cupcake="@cupcake" />
+    }
+  </div>
+}
+else
+{
+  <p>Carregando cupcakeModels...</p>
+}
+
+@code {
+  private List<CupcakeModel> _cupcakes = new();
+
+  protected override void OnInitialized()
+  {
+    LoadCupcakes();
+  }
+
+  private void LoadCupcakes()
+  {
+    _cupcakes = DbContext.Cupcakes.Where(c => c.Discount > 0).OrderByDescending(c => c.Discount).ToList();
+  }
+}

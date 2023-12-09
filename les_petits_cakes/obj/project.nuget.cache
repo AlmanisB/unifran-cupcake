@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KbN+79twulD4yYTW1nP/yzUlVMLaFK68JlfoLyW/PitT0MQokCJKvfYgr6YfiZcDHCefHxncEuPftWefjIDe+A==",
+  "dgSpecHash": "w6Z3a9gN55QNesf42fcBliFI1Fzeh5BZ6qbw9pqwpRuKnK1Mqpq2HvD5z8wsRWY5VxN5cOR+cX/AlZLfXkzjng==",
   "success": true,
-  "projectFilePath": "C:\\Users\\alman\\source\\repos\\les_petits_cakes\\les_petits_cakes\\les_petits_cakes.csproj",
+  "projectFilePath": "C:\\Users\\alman\\Source\\Repos\\AlmanisB\\unifran-cupcake\\les_petits_cakes\\les_petits_cakes.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\alman\\.nuget\\packages\\azure.core\\1.36.0\\azure.core.1.36.0.nupkg.sha512",
     "C:\\Users\\alman\\.nuget\\packages\\azure.identity\\1.10.4\\azure.identity.1.10.4.nupkg.sha512",
